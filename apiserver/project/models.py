@@ -10,7 +10,7 @@ class Project(models.Model):
 
     PROJECT_TYPE = (
         ('python', 'Python'),
-        ('vanilla', 'Vanilla JS'),
+        ('vanilla_js', 'Vanilla JS'),
         ('react', 'React JS'),
         ('cpp', 'CPP'),
     )

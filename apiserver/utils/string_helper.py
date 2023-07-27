@@ -29,3 +29,15 @@ def get_random_name(
         name = f"{random.choice(pre_prefixes)}{name}"
 
     return name
+
+
+def get_cpp_template() -> str:
+    """ Returns a CPP template """
+    return """
+            #include <iostream>
+            using namespace std;
+
+            int main() {
+                cout << "Hello World!";
+                return 0;
+            } """
