@@ -1,5 +1,6 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
+from rest_framework.exceptions import AuthenticationFailed
 
 from project.api.serializers import (
     ProjectEnvironmentSerializer,
@@ -28,7 +29,6 @@ class ProjectEnvironmentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDest
 
 
 class ProjectListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
     def perform_create(self, serializer):
@@ -37,9 +37,9 @@ class ProjectListCreateAPIView(generics.ListCreateAPIView):
 
         if finger_print is None:
             # of course, doing this in production is not a good idea
-            return Response({
-                'message': 'Please provide a finger print in the cookie.'
-            }, status=status.HTTP_400_BAD_REQUEST)
+            raise AuthenticationFailed({
+                'message': 'Please provide a finger print.'
+            })
 
         creator, _ = Creator.objects.get_or_create(
             finger_print=finger_print
@@ -79,6 +79,21 @@ class ProjectListCreateAPIView(generics.ListCreateAPIView):
             return Response({
                 'message': 'Invalid project type.'
             }, status=status.HTTP_400_BAD_REQUEST)
+
+    def get_queryset(self):
+
+        finger_print = self.request.COOKIES.get('finger_print', None)
+
+        if finger_print is None:
+            raise AuthenticationFailed({
+                'message': 'Please provide a finger print.'
+            })
+
+        creator, _ = Creator.objects.get_or_create(
+            finger_print=finger_print
+        )
+
+        return Project.objects.filter(creator=creator)
 
 
 class ProjectRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
