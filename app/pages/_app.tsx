@@ -1,6 +1,11 @@
-import '@/styles/globals.css'
-import type { AppProps } from 'next/app'
+import "@/styles/globals.css";
+import type { AppProps } from "next/app";
+
+// hooks
+import useSetFingerprint from "@/hooks/use-set-fingerprint";
 
 export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+  useSetFingerprint();
+
+  return <Component {...pageProps} />;
 }

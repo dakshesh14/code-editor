@@ -26,7 +26,7 @@ const Project: NextPage = () => {
       <CreateProjectModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSuccess={() => {}}
+        onSuccess={() => setIsModalOpen(false)}
       />
     </div>
   );

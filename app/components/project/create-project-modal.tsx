@@ -6,6 +6,9 @@ import { useForm, Controller } from "react-hook-form";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 
+// services
+import { createProject } from "@/services";
+
 // constants
 import { PROJECT_TYPES } from "@/constant";
 
@@ -18,7 +21,6 @@ import type { ProjectForm } from "@/types";
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit?: () => void;
   onSuccess: () => void;
 };
 
@@ -29,20 +31,42 @@ const defaultValues = {
 };
 
 export const CreateProjectModal: React.FC<Props> = (props) => {
-  const { isOpen, onClose, onSubmit, onSuccess } = props;
+  const { isOpen, onClose, onSuccess } = props;
 
   const {
     register,
     handleSubmit,
-    watch,
     control,
     reset,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<ProjectForm>({ defaultValues });
 
   const handleClose = () => {
     onClose();
     reset(defaultValues);
+  };
+
+  const onSubmit = async (data: ProjectForm) => {
+    try {
+      await createProject(data);
+      onSuccess();
+    } catch (error: any) {
+      const nonFieldErrors = error?.response?.data?.non_field_errors;
+
+      if (nonFieldErrors)
+        setError("non_field_errors", {
+          type: "manual",
+          message: nonFieldErrors,
+        });
+
+      Object.keys(error?.response?.data).forEach((key) => {
+        setError(key as keyof ProjectForm, {
+          type: "manual",
+          message: error?.response?.data[key],
+        });
+      });
+    }
   };
 
   return (
@@ -81,12 +105,15 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
-                      Create a new project and start collobrating.
+                      Create a new project and start collaborating.
                     </p>
                   </div>
                 </div>
 
-                <div className="space-y-4 mt-10">
+                <form
+                  onSubmit={handleSubmit(onSubmit)}
+                  className="space-y-4 mt-10"
+                >
                   <Controller
                     control={control}
                     name="project_type"
@@ -130,11 +157,11 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
 
                   <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                     <button
-                      type="button"
+                      type="submit"
+                      disabled={isSubmitting}
                       className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
-                      onClick={handleClose}
                     >
-                      Create Project
+                      {isSubmitting ? "Creating Project..." : "Create Project"}
                     </button>
                     <button
                       type="button"
@@ -144,7 +171,7 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
                       Cancel
                     </button>
                   </div>
-                </div>
+                </form>
               </Dialog.Panel>
             </Transition.Child>
           </div>

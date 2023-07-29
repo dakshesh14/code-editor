@@ -20,6 +20,10 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = '__all__'
+        extra_kwargs = {
+            'created_by': {'required': False},
+            'slug': {'required': False},
+        }
 
 
 class DirectorySerializer(serializers.ModelSerializer):
