@@ -38,7 +38,7 @@ class ProjectListCreateAPIView(generics.ListCreateAPIView):
         if finger_print is None:
             # of course, doing this in production is not a good idea
             raise AuthenticationFailed({
-                'message': 'Please provide a finger print.'
+                'non_field_errors': ['Please provide a finger print.']
             })
 
         creator, _ = Creator.objects.get_or_create(
@@ -86,7 +86,7 @@ class ProjectListCreateAPIView(generics.ListCreateAPIView):
 
         if finger_print is None:
             raise AuthenticationFailed({
-                'message': 'Please provide a finger print.'
+                'non_field_errors': ['Please provide a finger print.']
             })
 
         creator, _ = Creator.objects.get_or_create(
