@@ -96,5 +96,3 @@ class DirectoryListCreateAPIView(generics.ListCreateAPIView):
 class DirectoryRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Directory.objects.all()
     serializer_class = DirectorySerializer
-
-    lookup_field = 'id'
