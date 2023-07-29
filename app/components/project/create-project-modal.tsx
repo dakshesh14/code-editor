@@ -45,8 +45,6 @@ export const CreateProjectModal: React.FC<Props> = (props) => {
     reset(defaultValues);
   };
 
-  console.log("Watch", watch());
-
   return (
     <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-10" onClose={handleClose}>
