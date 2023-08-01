@@ -4,12 +4,18 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+// swr
+import { mutate } from "swr";
+
 // icons
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 
 // layouts
 import { Sidebar } from "./sidebar";
+
+// hooks
+import useToast from "@/hooks/use-toast";
 
 // components
 import { CreateProjectModal } from "@/components/project";
@@ -22,8 +28,7 @@ const ProjectLayout: React.FC<Props> = (props) => {
   const { children } = props;
 
   const router = useRouter();
-
-  console.log(router);
+  const { addToast } = useToast();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -95,7 +100,16 @@ const ProjectLayout: React.FC<Props> = (props) => {
       <CreateProjectModal
         isOpen={router.asPath === "/projects/new" ? true : false}
         onClose={() => router.push("/projects")}
-        onSuccess={() => router.push("/projects")}
+        onSuccess={() => {
+          router.push("/projects");
+          addToast({
+            title: "Project created",
+            message: "Your project has been created successfully.",
+            status: "success",
+            hide: false,
+          });
+          mutate("/projects");
+        }}
       />
     </>
   );
