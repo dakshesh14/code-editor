@@ -16,6 +16,7 @@ import { Sidebar } from "./sidebar";
 
 // hooks
 import useToast from "@/hooks/use-toast";
+import useProjectContext from "@/hooks/use-project-context";
 
 // components
 import { CreateProjectModal } from "@/components/project";
@@ -31,6 +32,8 @@ const ProjectLayout: React.FC<Props> = (props) => {
   const { addToast } = useToast();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const { search, setSearch } = useProjectContext();
 
   return (
     <>
@@ -65,8 +68,10 @@ const ProjectLayout: React.FC<Props> = (props) => {
                 />
                 <input
                   id="search-field"
-                  className="block h-full w-full border-0 py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
+                  className="block w-full h-full pl-8 pr-3 py-2 border border-transparent rounded-md leading-5 bg-gray-1a00 text-gray-900 placeholder-gray-500 focus:outline-none focus:bg-white focus:ring-0 focus:placeholder-gray-400 focus:text-gray-900 sm:text-sm"
                   placeholder="Search..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
                   type="search"
                   name="search"
                 />

@@ -20,3 +20,7 @@ export const ProjectCard: React.FC<Props> = (props) => {
     </div>
   );
 };
+
+export const ProjectCardSkeleton: React.FC = () => (
+  <div className="h-32 col-span-12 md:col-span-6 lg:col-span-4 p-3 py-4 bg-gray-100 animate-pulse" />
+);
