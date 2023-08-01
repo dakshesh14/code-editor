@@ -14,12 +14,10 @@ export const ProjectList: React.FC = () => {
   if (!projects) return <div>loading...</div>;
 
   return (
-    <div className="mt-5 md:mt-10 lg:mt-20">
-      <div className="grid grid-cols-12 gap-4">
-        {projects.map((project) => (
-          <ProjectCard key={project.id} data={project} />
-        ))}
-      </div>
+    <div className="grid grid-cols-12 gap-4">
+      {projects.map((project) => (
+        <ProjectCard key={project.id} data={project} />
+      ))}
     </div>
   );
 };
