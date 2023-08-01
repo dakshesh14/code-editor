@@ -103,7 +103,12 @@ const ProjectLayout: React.FC<Props> = (props) => {
       </div>
 
       <CreateProjectModal
-        isOpen={router.asPath === "/projects/new" ? true : false}
+        isOpen={
+          router.asPath === "/projects/new" &&
+          router.pathname !== "/projects/new"
+            ? true
+            : false
+        }
         onClose={() => router.push("/projects")}
         onSuccess={() => {
           router.push("/projects");
