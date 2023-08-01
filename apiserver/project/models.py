@@ -21,7 +21,7 @@ class Project(models.Model):
 
     project_type = models.CharField(max_length=15, choices=PROJECT_TYPE)
 
-    created_by = models.ForeignKey(
+    creator = models.ForeignKey(
         'Creator', on_delete=models.CASCADE, related_name='projects'
     )
 
@@ -30,7 +30,7 @@ class Project(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(get_random_name()) + '-' + get_uuid()
+            self.slug = slugify(self.name) + '-' + get_uuid()
         super(Project, self).save(*args, **kwargs)
 
 

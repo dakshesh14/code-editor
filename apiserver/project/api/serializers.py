@@ -21,7 +21,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         model = Project
         fields = '__all__'
         extra_kwargs = {
-            'created_by': {'required': False},
+            'creator': {'required': False},
             'slug': {'required': False},
         }
 

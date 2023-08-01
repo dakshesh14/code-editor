@@ -33,17 +33,7 @@ class ProjectListCreateAPIView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
 
-        finger_print = self.request.COOKIES.get('finger_print', None)
-
-        if finger_print is None:
-            # of course, doing this in production is not a good idea
-            raise AuthenticationFailed({
-                'non_field_errors': ['Please provide a finger print.']
-            })
-
-        creator, _ = Creator.objects.get_or_create(
-            finger_print=finger_print
-        )
+        creator = self.request.creator
 
         project = serializer.save(creator=creator)
 
@@ -81,18 +71,7 @@ class ProjectListCreateAPIView(generics.ListCreateAPIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
     def get_queryset(self):
-
-        finger_print = self.request.COOKIES.get('finger_print', None)
-
-        if finger_print is None:
-            raise AuthenticationFailed({
-                'non_field_errors': ['Please provide a finger print.']
-            })
-
-        creator, _ = Creator.objects.get_or_create(
-            finger_print=finger_print
-        )
-
+        creator = self.request.creator
         return Project.objects.filter(creator=creator)
 
 

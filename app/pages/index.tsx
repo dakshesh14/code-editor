@@ -5,7 +5,7 @@ import { Header } from "@/components/landing";
 
 const Landing = () => {
   return (
-    <div className="bg-gray-900">
+    <div className="bg-slate-900">
       <Header />
 
       <div className="relative isolate pt-14">

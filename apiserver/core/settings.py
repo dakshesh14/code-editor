@@ -66,6 +66,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'middleware.finger_print.FingerPrintAuthenticationMiddleWare',
 ]
 
 ROOT_URLCONF = 'core.urls'
