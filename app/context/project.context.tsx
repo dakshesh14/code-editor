@@ -1,4 +1,4 @@
-import { createContext, useReducer, useContext } from "react";
+import { createContext, useReducer } from "react";
 
 export const projectContext = createContext(
   {} as ProjectContext & {
