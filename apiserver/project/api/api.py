@@ -1,6 +1,6 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import ValidationError
 
 from project.api.serializers import (
     ProjectEnvironmentSerializer,
@@ -85,6 +85,35 @@ class ProjectRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
 class DirectoryListCreateAPIView(generics.ListCreateAPIView):
     queryset = Directory.objects.all()
     serializer_class = DirectorySerializer
+
+    def get_queryset(self):
+
+        project_slug = self.kwargs.get('project_slug', None)
+
+        if project_slug is None:
+            raise ValidationError({
+                'message': 'Please provide a project slug.'
+            })
+
+        directories = Directory.objects.filter(
+            project__slug=project_slug,
+            parent=None,
+        )
+
+        return directories
+
+    def perform_create(self, serializer):
+
+        project_slug = self.kwargs.get('project_slug', None)
+
+        if project_slug is None:
+            raise ValidationError({
+                'message': 'Please provide a project slug.'
+            })
+
+        project = Project.objects.get(slug=project_slug)
+
+        serializer.save(project=project)
 
 
 class DirectoryRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):

@@ -65,7 +65,7 @@ class Directory(models.Model):
     def save(self, *args, **kwargs):
         self.file_type = 'file' if '.' in self.name else 'directory'
 
-        if self.parent and self.parent.file_type == 'file':
+        if self.parent.file_type == 'file':
             raise ValueError('Cannot create a directory inside a file')
 
         super(Directory, self).save(*args, **kwargs)
