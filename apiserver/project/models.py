@@ -48,6 +48,10 @@ class Directory(models.Model):
         Project, on_delete=models.CASCADE, related_name='directories'
     )
 
+    parent = models.ForeignKey(
+        'self', on_delete=models.CASCADE, related_name='children', null=True, blank=True
+    )
+
     file_type = models.CharField(
         max_length=15, choices=FILE_TYPE, default='directory'
     )
@@ -55,8 +59,15 @@ class Directory(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        unique_together = ('name', 'project', 'parent')
+
     def save(self, *args, **kwargs):
         self.file_type = 'file' if '.' in self.name else 'directory'
+
+        if self.parent and self.parent.file_type == 'file':
+            raise ValueError('Cannot create a directory inside a file')
+
         super(Directory, self).save(*args, **kwargs)
 
     def __str__(self):
