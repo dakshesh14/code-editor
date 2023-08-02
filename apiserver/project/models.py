@@ -62,6 +62,12 @@ class Directory(models.Model):
     class Meta:
         unique_together = ('name', 'project', 'parent')
 
+    def get_path_name(self):
+        if self.parent:
+            return self.parent.get_path_name() + '/' + self.name
+        else:
+            return self.name
+
     def save(self, *args, **kwargs):
         self.file_type = 'file' if '.' in self.name else 'directory'
 

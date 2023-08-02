@@ -97,7 +97,6 @@ class DirectoryListCreateAPIView(generics.ListCreateAPIView):
 
         directories = Directory.objects.filter(
             project__slug=project_slug,
-            parent=None,
         )
 
         return directories

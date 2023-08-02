@@ -1,30 +1,55 @@
-import { createContext, useReducer, useCallback } from "react";
+import { createContext, useReducer, useCallback, useEffect } from "react";
+
+// next
+import { useRouter } from "next/router";
+
+// swr
+import useSWR from "swr";
+
+// services
+import { getProjectBySlug, getProjectDirectories } from "@/services";
 
 export const projectDetailContext = createContext(
   {} as ProjectDetailStateContext & ProjectDetailFunctionContext
 );
 
 // types
-
-import type { Directory } from "@/types";
+import type { Directory, Project } from "@/types";
 
 export type ProjectDetailStateContext = {
-  directories: Directory[];
+  directories?: Directory[];
+  isDirectoryLoading: boolean;
+  project?: Project;
+  isProjectLoading: boolean;
   isFileSearchOpen: boolean;
   search: string;
   isExecuting: boolean;
+  currentOpenDirectory?: string;
 };
 
 export type ProjectDetailFunctionContext = {
   setSearch: (val: string) => void;
   setIsExecuting: (val: boolean) => void;
   setFileSearchOpen: (val: boolean) => void;
+  mutateProjectDetail: () => void;
+  mutateDirectories: () => void;
+  setCurrentOpenDirectory: (val: string) => void;
 };
 
 type Reducer = (
   state: ProjectDetailStateContext,
   action: any
 ) => ProjectDetailStateContext;
+
+const initialState: ProjectDetailStateContext = {
+  directories: undefined,
+  isDirectoryLoading: false,
+  project: undefined,
+  isProjectLoading: false,
+  isFileSearchOpen: false,
+  search: "",
+  isExecuting: false,
+};
 
 // reducer
 export const projectDetailReducer: Reducer = (state, action) => {
@@ -44,8 +69,11 @@ export const projectDetailReducer: Reducer = (state, action) => {
         ...state,
         isFileSearchOpen: action.payload?.isFileSearchOpen || false,
       };
-    case "SET_DIRECTORIES":
-      return { ...state, directories: action.payload?.directories || [] };
+    case "SET_CURRENT_OPEN_DIRECTORY":
+      return {
+        ...state,
+        currentOpenDirectory: action.payload?.currentOpenDirectory || "",
+      };
     default:
       return state;
   }
@@ -57,12 +85,28 @@ export const ProjectDetailProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [state, dispatch] = useReducer(projectDetailReducer, {
-    directories: [],
-    isFileSearchOpen: false,
-    search: "",
-    isExecuting: false,
-  });
+  const router = useRouter();
+  const { slug } = router.query;
+
+  const {
+    data: projectDetail,
+    mutate: projectDetailMutate,
+    error: projectDetailError,
+  } = useSWR<Project>(
+    slug ? `/api/projects/${slug}` : null,
+    slug ? () => getProjectBySlug(slug.toString()) : null
+  );
+
+  const {
+    data: directories,
+    mutate: directoriesMutate,
+    error: directoriesError,
+  } = useSWR<Directory[]>(
+    slug ? `/api/projects/${slug}/directories` : null,
+    slug ? () => getProjectDirectories(slug.toString()) : null
+  );
+
+  const [state, dispatch] = useReducer(projectDetailReducer, initialState);
 
   const setSearch = useCallback(
     (search: string) => {
@@ -94,13 +138,30 @@ export const ProjectDetailProvider = ({
     [dispatch]
   );
 
+  const setCurrentOpenDirectory = useCallback(
+    (currentOpenDirectory: string) => {
+      dispatch({
+        type: "SET_CURRENT_OPEN_DIRECTORY",
+        payload: { currentOpenDirectory },
+      });
+    },
+    [dispatch]
+  );
+
   return (
     <projectDetailContext.Provider
       value={{
         ...state,
         setSearch,
+        directories,
         setIsExecuting,
         setFileSearchOpen,
+        project: projectDetail,
+        setCurrentOpenDirectory,
+        isDirectoryLoading: !directories && !directoriesError,
+        isProjectLoading: !projectDetail && !projectDetailError,
+        mutateProjectDetail: projectDetailMutate,
+        mutateDirectories: directoriesMutate,
       }}
     >
       {children}

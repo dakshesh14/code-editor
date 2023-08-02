@@ -27,14 +27,14 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class DirectorySerializer(serializers.ModelSerializer):
-    children = serializers.SerializerMethodField()
+    path_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Directory
         fields = '__all__'
 
-    def get_children(self, obj):
-        return DirectorySerializer(obj.children.all(), many=True).data
+    def get_path_name(self, obj):
+        return obj.get_path_name()
 
 
 class CreatorSerializer(serializers.ModelSerializer):
