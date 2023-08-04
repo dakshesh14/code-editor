@@ -1,0 +1,38 @@
+{
+  "defaultAction": "SCMP_ACT_ALLOW",
+  "architectures": ["SCMP_ARCH_X86_64"],
+  "syscalls": [
+    {
+      "name": "read",
+      "action": "SCMP_ACT_ALLOW"
+    },
+    {
+      "name": "write",
+      "action": "SCMP_ACT_ALLOW"
+    },
+    {
+      "name": "exit",
+      "action": "SCMP_ACT_ALLOW"
+    },
+    {
+      "name": "rt_sigreturn",
+      "action": "SCMP_ACT_ALLOW"
+    },
+    {
+      "name": "brk",
+      "action": "SCMP_ACT_ALLOW"
+    },
+    {
+      "name": "close",
+      "action": "SCMP_ACT_ALLOW"
+    },
+    {
+      "name": "fstat",
+      "action": "SCMP_ACT_ALLOW"
+    },
+    {
+      "name": "arch_prctl",
+      "action": "SCMP_ACT_ALLOW"
+    }
+  ]
+}

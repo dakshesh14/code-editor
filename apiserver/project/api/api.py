@@ -1,4 +1,5 @@
 from rest_framework import generics, status
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 
@@ -15,6 +16,7 @@ from project.models import (
     ProjectEnvironment,
 )
 
+from utils.container import Container
 from utils.string_helper import get_cpp_template
 
 
@@ -118,3 +120,33 @@ class DirectoryListCreateAPIView(generics.ListCreateAPIView):
 class DirectoryRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Directory.objects.all()
     serializer_class = DirectorySerializer
+
+
+class ProjectRunAPIView(APIView):
+    def post(self, request):
+
+        code = request.data.get('code', None)
+
+        if code is None:
+            return Response({
+                'message': 'Please provide code.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        image = Container()
+
+        code = code.replace('"', '\\"')
+        command = ['bash', '-c', f'echo "{code}" > main.py && python3 main.py']
+
+        container = image.create_container(command=command)
+
+        container.start()
+        container.wait()
+
+        logs = container.logs().decode('utf-8')
+
+        container.stop()
+        container.remove()
+
+        return Response({
+            'logs': logs
+        }, status=status.HTTP_200_OK)
