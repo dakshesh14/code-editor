@@ -1,6 +1,7 @@
 import React from "react";
 
 // next
+import dynamic from "next/dynamic";
 import type { NextPage } from "next";
 
 // provider
@@ -10,7 +11,12 @@ import { ProjectDetailProvider } from "@/context/projectDetail.context";
 import EditorLayout from "@/layouts/editor-layout";
 
 // components
-import { ProjectEditor } from "@/components/project";
+const ProjectEditor = dynamic(
+  () => import("@/components/project").then((mod) => mod.ProjectEditor),
+  {
+    ssr: false,
+  }
+);
 
 const ProjectEdit: NextPage = () => {
   return (

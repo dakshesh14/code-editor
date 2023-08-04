@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useRef } from "react";
 
 // next
 import type { NextPage } from "next";
 
 // manoco
+import type { editor } from "monaco-editor";
 import { Editor } from "@monaco-editor/react";
 
 // hooks
@@ -15,6 +16,7 @@ import { getLanguageThroughExtension } from "@/helpers/string.helper";
 const THEMES = ["vs", "vs-dark", "hc-black"];
 
 export const ProjectEditor: NextPage = () => {
+  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const [chosenTheme, setChosenTheme] = React.useState(THEMES[0]);
 
   const { directories, currentOpenDirectory } = useProjectDetailContext();
@@ -22,6 +24,8 @@ export const ProjectEditor: NextPage = () => {
   const currentFile = directories?.find(
     (dir) => dir.id === currentOpenDirectory
   );
+
+  if (!currentFile) return null;
 
   return (
     <div className="flex flex-col h-full">
@@ -41,8 +45,9 @@ export const ProjectEditor: NextPage = () => {
       </div>
 
       <Editor
-        path={currentFile?.path_name}
+        onMount={(ref) => (editorRef.current = ref)}
         theme={chosenTheme}
+        path={currentFile?.path_name}
         defaultValue={currentFile?.content}
         defaultLanguage={getLanguageThroughExtension(
           currentFile?.name.split(".").pop() ?? ""
