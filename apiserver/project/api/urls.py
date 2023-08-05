@@ -18,7 +18,7 @@ urlpatterns = [
         ProjectEnvironmentRetrieveUpdateDestroyAPIView.as_view()
     ),
 
-    path('projects/run/', ProjectRunAPIView.as_view()),
+    path('projects/run/<int:pk>/', ProjectRunAPIView.as_view()),
 
     path('projects/', ProjectListCreateAPIView.as_view()),
     path('projects/<slug>/', ProjectRetrieveUpdateDestroyAPIView.as_view()),

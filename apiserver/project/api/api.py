@@ -16,7 +16,7 @@ from project.models import (
     ProjectEnvironment,
 )
 
-from utils.container import Container
+from utils.code_executor import CodeExecutor
 from utils.string_helper import get_cpp_template
 
 
@@ -55,7 +55,7 @@ class ProjectListCreateAPIView(generics.ListCreateAPIView):
 
         elif project_type == 'vanilla_js':
             Directory.objects.create(
-                name='index.html',
+                name='index.js',
                 content="console.log('Hello World!')",
                 project=project,
             )
@@ -123,7 +123,7 @@ class DirectoryRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIVie
 
 
 class ProjectRunAPIView(APIView):
-    def post(self, request):
+    def post(self, request, pk):
 
         code = request.data.get('code', None)
 
@@ -132,12 +132,13 @@ class ProjectRunAPIView(APIView):
                 'message': 'Please provide code.'
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        image = Container()
+        code_executor = CodeExecutor()
 
-        code = code.replace('"', '\\"')
-        command = ['bash', '-c', f'echo "{code}" > main.py && python3 main.py']
+        directory = Directory.objects.get(pk=pk)
 
-        container = image.create_container(command=command)
+        command = code_executor.create_command(directory.name, code)
+
+        container = code_executor.create_container(command=command)
 
         container.start()
         container.wait()

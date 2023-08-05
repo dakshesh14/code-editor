@@ -1,8 +1,7 @@
 FROM python:3.9
-FROM node:14
-FROM openjdk:8-jdk-alpine
-FROM php:7.4-apache
 FROM gcc:latest
+
+RUN apt-get update && apt-get install -y nodejs default-jdk
 
 WORKDIR /app
 
