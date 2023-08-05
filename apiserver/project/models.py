@@ -33,6 +33,9 @@ class Project(models.Model):
             self.slug = slugify(self.name) + '-' + get_uuid()
         super(Project, self).save(*args, **kwargs)
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class Directory(models.Model):
 
@@ -42,7 +45,7 @@ class Directory(models.Model):
     )
 
     name = models.CharField(max_length=100)
-    content = models.TextField()
+    content = models.TextField(null=True, blank=True)
 
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name='directories'
