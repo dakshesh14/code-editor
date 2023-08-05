@@ -1,5 +1,6 @@
 // next
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/router";
 
 // headless ui
@@ -10,7 +11,7 @@ import { FolderIcon, HomeIcon } from "@heroicons/react/24/outline";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 
 // helpers
-import { classNames } from "@/helpers/string.helper";
+import { classNames, getLanguageLogo } from "@/helpers/string.helper";
 
 // hooks
 import useProjectDetailContext from "@/hooks/use-project-detail";
@@ -30,6 +31,8 @@ const DirectoryItem: React.FC<{ directory: Directory }> = ({ directory }) => {
   const children =
     directories?.filter((dir) => dir.parent === directory.id) || [];
 
+  const languageLogo = getLanguageLogo(directory.name);
+
   return (
     <li>
       {children.length <= 0 ? (
@@ -43,6 +46,15 @@ const DirectoryItem: React.FC<{ directory: Directory }> = ({ directory }) => {
             "rounded-md py-2 pl-4 text-sm leading-6 font-semibold text-gray-300 w-full flex items-center text-left truncate"
           )}
         >
+          {languageLogo && (
+            <Image
+              src={languageLogo}
+              alt={directory.name}
+              width={18}
+              height={18}
+              className="mr-2"
+            />
+          )}
           {directory.name}
         </button>
       ) : (
@@ -54,7 +66,7 @@ const DirectoryItem: React.FC<{ directory: Directory }> = ({ directory }) => {
                   currentOpenDirectory === directory.id
                     ? "bg-gray-600"
                     : "hover:bg-gray-700",
-                  "rounded-md py-2 pl-4 text-sm leading-6 font-semibold text-gray-300 w-full flex items-center text-left truncate"
+                  "rounded-md py-2 pl-3 text-sm leading-6 font-semibold text-gray-300 w-full flex items-center text-left truncate"
                 )}
               >
                 <ChevronRightIcon
@@ -85,8 +97,7 @@ const DirectoryItem: React.FC<{ directory: Directory }> = ({ directory }) => {
 export const Sidebar: React.FC = () => {
   const router = useRouter();
 
-  const { project, directories, currentOpenDirectory } =
-    useProjectDetailContext();
+  const { project, directories } = useProjectDetailContext();
 
   return (
     <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
