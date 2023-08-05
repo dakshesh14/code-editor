@@ -31,17 +31,18 @@ export const ProjectEditor: NextPage = () => {
   const [chosenTheme, setChosenTheme] = useState(THEMES[0]);
   const [executionResult, setExecutionResult] = useState<string | null>(null);
 
-  const { handleCodeRun, isExecuting } = useCodeExecutor();
   const { directories, currentOpenDirectory } = useProjectDetailContext();
+
+  const currentFile = directories?.find(
+    (dir) => dir.id === currentOpenDirectory
+  );
+
+  const { handleCodeRun, isExecuting } = useCodeExecutor(currentFile?.id!);
   useCtrlKeydown("q", () => {
     handleCodeRun(editorRef.current?.getValue() || "").then((res) => {
       setExecutionResult(res || null);
     });
   });
-
-  const currentFile = directories?.find(
-    (dir) => dir.id === currentOpenDirectory
-  );
 
   if (!currentFile)
     return (

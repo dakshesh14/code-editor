@@ -82,10 +82,13 @@ export const deleteProject = async (slug: string): Promise<void> => {
   }
 };
 
-export const executeCode = async (code: string): Promise<any> => {
+export const executeCode = async (
+  code: string,
+  directoryId: string
+): Promise<any> => {
   try {
     const { data } = await axios.post(
-      `${baseURL}/api/projects/run/`,
+      `${baseURL}/api/projects/run/${directoryId}/`,
       {
         code,
       },
