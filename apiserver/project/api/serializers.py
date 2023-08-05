@@ -32,6 +32,10 @@ class DirectorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Directory
         fields = '__all__'
+        extra_kwargs = {
+            'project': {'required': False},
+            'parent': {'required': False},
+        }
 
     def get_path_name(self, obj):
         return obj.get_path_name()

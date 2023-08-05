@@ -27,7 +27,7 @@ urlpatterns = [
     path('projects/<slug>/', ProjectRetrieveUpdateDestroyAPIView.as_view()),
 
     path(
-        'directories/<slug:project_slug>/',
+        'directories/project/<slug:project_slug>/',
         DirectoryListCreateAPIView.as_view()
     ),
     path('directories/<int:pk>/', DirectoryRetrieveUpdateDestroyAPIView.as_view()),

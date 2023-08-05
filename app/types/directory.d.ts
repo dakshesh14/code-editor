@@ -1,7 +1,7 @@
 export interface Directory {
   id: string;
   name: string;
-  content: string;
+  content: string | null;
   file_type: string;
   created_at: Date;
   last_modified: Date;
@@ -12,6 +12,7 @@ export interface Directory {
 
 export interface DirectoryForm {
   name: string;
-  content: string;
+  content: string | null;
   parent: string | null;
+  project: string;
 }

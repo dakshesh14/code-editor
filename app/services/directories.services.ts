@@ -14,7 +14,7 @@ export const getProjectDirectories = async (
 ): Promise<Directory[]> => {
   try {
     const { data } = await axios.get(
-      `${baseURL}/api/directories/${projectSlug}/`,
+      `${baseURL}/api/directories/project/${projectSlug}/`,
       {
         headers: {
           Authorization: `FingerPrint ${fingerPrint}`,
@@ -41,12 +41,12 @@ export const getDirectoryById = async (id: string): Promise<Directory> => {
 };
 
 export const createDirectory = async (
-  formData: DirectoryForm,
-  projectSlug: string
+  projectSlug: string,
+  formData: DirectoryForm
 ): Promise<Directory> => {
   try {
     const { data } = await axios.post(
-      `${baseURL}/api/directories/${projectSlug}/`,
+      `${baseURL}/api/directories/project/${projectSlug}/`,
       formData,
       {
         headers: {
@@ -61,8 +61,8 @@ export const createDirectory = async (
 };
 
 export const updateDirectory = async (
-  formData: DirectoryForm,
-  id: string
+  id: string,
+  formData: DirectoryForm
 ): Promise<Directory> => {
   try {
     const { data } = await axios.put(

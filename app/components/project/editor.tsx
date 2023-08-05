@@ -15,6 +15,9 @@ import {
   MoonIcon,
 } from "@heroicons/react/24/outline";
 
+// services
+import { updateDirectory } from "@/services";
+
 // hooks
 import useCtrlKeydown from "@/hooks/use-ctrl-keydown";
 import useCodeExecutor from "@/hooks/use-code-executor";
@@ -45,6 +48,14 @@ export const ProjectEditor: NextPage = () => {
   useCtrlKeydown("q", () => {
     handleCodeRun(editorRef.current?.getValue() || "").then((res) => {
       setExecutionResult(res || null);
+    });
+  });
+  useCtrlKeydown("s", () => {
+    updateDirectory(currentFile?.id!, {
+      content: editorRef.current?.getValue() || "",
+      name: currentFile?.name!,
+      parent: currentFile?.parent!,
+      project: currentFile?.project!,
     });
   });
 
@@ -119,7 +130,7 @@ export const ProjectEditor: NextPage = () => {
         onMount={(ref) => (editorRef.current = ref)}
         theme={chosenTheme}
         path={currentFile?.path_name}
-        defaultValue={currentFile?.content}
+        value={currentFile?.content || ""}
         language={getLanguageThroughExtension(
           currentFile?.name.split(".").pop() ?? ""
         )}
