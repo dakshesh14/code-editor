@@ -101,6 +101,12 @@ class DirectoryListCreateAPIView(generics.ListCreateAPIView):
             project__slug=project_slug,
         )
 
+        directories = sorted(
+            directories,
+            key=lambda directory: directory.file_type == 'directory',
+            reverse=True,
+        )
+
         return directories
 
     def perform_create(self, serializer):
