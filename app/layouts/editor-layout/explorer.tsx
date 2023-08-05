@@ -4,13 +4,7 @@ import { Fragment, useState } from "react";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 
 // icons
-import {
-  DocumentPlusIcon,
-  FolderPlusIcon,
-  DocumentIcon,
-  HashtagIcon,
-  TagIcon,
-} from "@heroicons/react/24/outline";
+import { DocumentIcon } from "@heroicons/react/24/outline";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 
 // hooks
@@ -19,13 +13,6 @@ import useProjectDetailContext from "@/hooks/use-project-detail";
 
 // helpers
 import { classNames } from "@/helpers/string.helper";
-
-const quickActions = [
-  { name: "Add new file...", icon: DocumentPlusIcon, shortcut: "N", url: "#" },
-  { name: "Add new folder...", icon: FolderPlusIcon, shortcut: "F", url: "#" },
-  { name: "Add hashtag...", icon: HashtagIcon, shortcut: "H", url: "#" },
-  { name: "Add label...", icon: TagIcon, shortcut: "L", url: "#" },
-];
 
 export const Explorer = () => {
   const [query, setQuery] = useState("");
@@ -146,46 +133,6 @@ export const Explorer = () => {
                         ))}
                       </ul>
                     </li>
-                    {query === "" && (
-                      <li className="p-2">
-                        <h2 className="sr-only">Quick actions</h2>
-                        <ul className="text-sm text-gray-400">
-                          {quickActions.map((action) => (
-                            <Combobox.Option
-                              key={action.shortcut}
-                              value={action}
-                              className={({ active }) =>
-                                classNames(
-                                  "flex cursor-default select-none items-center rounded-md px-3 py-2",
-                                  active && "bg-gray-800 text-white"
-                                )
-                              }
-                            >
-                              {({ active }) => (
-                                <>
-                                  <action.icon
-                                    className={classNames(
-                                      "h-6 w-6 flex-none",
-                                      active ? "text-white" : "text-gray-500"
-                                    )}
-                                    aria-hidden="true"
-                                  />
-                                  <span className="ml-3 flex-auto truncate">
-                                    {action.name}
-                                  </span>
-                                  <span className="ml-3 flex-none text-xs font-semibold text-gray-400">
-                                    <kbd className="font-sans">⌘</kbd>
-                                    <kbd className="font-sans">
-                                      {action.shortcut}
-                                    </kbd>
-                                  </span>
-                                </>
-                              )}
-                            </Combobox.Option>
-                          ))}
-                        </ul>
-                      </li>
-                    )}
                   </Combobox.Options>
                 )}
 
