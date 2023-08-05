@@ -86,50 +86,74 @@ class CodeExecutor:
 
         return None
 
-    def create_command(self, file_name, code):
+    def format_code(self, code):
+        """ Format the code to be executed in the container.
+
+        This function is used to parse quotes in the code.
+
+        Args:
+            code (str): The code to be executed in the container.
+
+        Returns:
+            str: The formatted code.
+
+        """
+        return code.replace('"', '\\"')
+
+    def create_command(self, entry_file, directories):
         """ Create a command to be executed in the container.
 
         You can use this method to create a command to be executed in the container.
         This function will use the file name and code to create the command.
 
         Args:
-            file_name (str): The name of the file.
-            code (str): The code to be executed.
+            entry_file (dict): The entry file object.
+            directories (list): The list of files and directories.
 
         Returns:
             list: The command to be executed in the container.
 
         """
-        language = self.get_language(file_name)
-
-        if language is None:
-            raise Exception('Invalid file type.')
-
-        code = code.replace('"', '\\"')
 
         command = list()
 
         command.append('bash')
         command.append('-c')
 
-        if language == 'python':
-            command.append(
-                f'echo "{code}" > {file_name} && python3 {file_name}'
-            )
+        command.append('')
 
-        elif language == 'java':
-            command.append(
-                f'echo "{code}" > Main.java && javac {file_name} && java {file_name.split(".")[0]}'
-            )
+        for file in directories:
+            file_name = file.name
+            code = file.content
 
-        elif language == 'javascript':
-            command.append(
-                f'echo "{code}" > main.js && node main.js'
-            )
+            if file.file_type == 'directory':
+                command[-1] = command[-1] + f'mkdir {file_name} && '
+            else:
+                language = self.get_language(file_name)
 
-        elif language == 'cpp':
-            command.append(
-                f'echo "{code}" > main.cpp && g++ -x c++ main.cpp && ./a.out'
-            )
+                if language is None:
+                    raise Exception(f'Invalid file type: {file_name}')
+
+                code = self.format_code(code)
+
+                command[-1] = command[-1] + \
+                    f'echo "{code}" > {file.get_path_name()} && '
+
+        entry_file_language = self.get_language(entry_file.name)
+
+        if entry_file_language is None:
+            raise Exception(f'Invalid file type: {entry_file.get_path_name()}')
+
+        elif entry_file_language == 'python':
+            command[-1] = f'{command[-1]} python3 {entry_file.get_path_name()}'
+
+        elif entry_file_language == 'java':
+            command[-1] = f'{command[-1]} javac {entry_file.name} && java {entry_file.get_path_name().split(".")[0]}'
+
+        elif entry_file_language == 'javascript':
+            command[-1] = f'{command[-1]} node {entry_file.get_path_name()}'
+
+        elif entry_file_language == 'cpp':
+            command[-1] = f'{command[-1]} g++ {entry_file.get_path_name()} && ./a.out'
 
         return command

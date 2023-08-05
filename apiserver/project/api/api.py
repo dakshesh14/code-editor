@@ -123,20 +123,16 @@ class DirectoryRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIVie
 
 
 class ProjectRunAPIView(APIView):
-    def post(self, request, pk):
-
-        code = request.data.get('code', None)
-
-        if code is None:
-            return Response({
-                'message': 'Please provide code.'
-            }, status=status.HTTP_400_BAD_REQUEST)
-
+    def post(self, _, project_slug, directory_pk):
         code_executor = CodeExecutor()
 
-        directory = Directory.objects.get(pk=pk)
+        project = Project.objects.get(slug=project_slug)
+        directory = Directory.objects.get(pk=directory_pk)
 
-        command = code_executor.create_command(directory.name, code)
+        command = code_executor.create_command(
+            directory,
+            project.directories.all(),
+        )
 
         container = code_executor.create_container(command=command)
 

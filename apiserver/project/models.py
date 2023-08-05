@@ -80,7 +80,7 @@ class Directory(models.Model):
         super(Directory, self).save(*args, **kwargs)
 
     def __str__(self):
-        return self.name
+        return self.name + ' - ' + self.project.name
 
 
 class Creator(models.Model):
