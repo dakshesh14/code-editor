@@ -7,7 +7,7 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 import {
   DocumentPlusIcon,
   FolderPlusIcon,
-  FolderIcon,
+  DocumentIcon,
   HashtagIcon,
   TagIcon,
 } from "@heroicons/react/24/outline";
@@ -125,7 +125,7 @@ export const Explorer = () => {
                           >
                             {({ active }) => (
                               <>
-                                <FolderIcon
+                                <DocumentIcon
                                   className={classNames(
                                     "h-6 w-6 flex-none",
                                     active ? "text-white" : "text-gray-500"
@@ -133,7 +133,7 @@ export const Explorer = () => {
                                   aria-hidden="true"
                                 />
                                 <span className="ml-3 flex-auto truncate">
-                                  {directory.name}
+                                  {directory.path_name}
                                 </span>
                                 {active && (
                                   <span className="ml-3 flex-none text-gray-400">
@@ -191,7 +191,7 @@ export const Explorer = () => {
 
                 {query !== "" && filteredDirectories.length === 0 && (
                   <div className="px-6 py-14 text-center sm:px-14">
-                    <FolderIcon
+                    <DocumentIcon
                       className="mx-auto h-6 w-6 text-gray-500"
                       aria-hidden="true"
                     />
