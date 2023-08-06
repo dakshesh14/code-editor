@@ -34,7 +34,7 @@ export const ProjectEditor: NextPage = () => {
   const [chosenTheme, setChosenTheme] = useState(THEMES[0]);
   const [executionResult, setExecutionResult] = useState<string | null>(null);
 
-  const { directories, currentOpenDirectory, project } =
+  const { directories, currentOpenDirectory, project, mutateDirectories } =
     useProjectDetailContext();
 
   const currentFile = directories?.find(
@@ -56,6 +56,13 @@ export const ProjectEditor: NextPage = () => {
       name: currentFile?.name!,
       parent: currentFile?.parent!,
       project: currentFile?.project!,
+    }).then((res) => {
+      mutateDirectories((dirs) => {
+        if (!dirs) return;
+        const index = dirs.findIndex((dir) => dir.id === currentFile?.id!);
+        dirs[index] = res;
+        return [...dirs];
+      });
     });
   });
 
