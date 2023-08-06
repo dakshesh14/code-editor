@@ -10,15 +10,26 @@ export const getLanguageThroughExtension = (extension: string) => {
       return "python";
     case "js":
       return "javascript";
-    case "ts":
-      return "typescript";
-    case "html":
-      return "html";
-    case "css":
-      return "css";
+    case "java":
+      return "java";
     case "cpp":
       return "cpp";
     default:
       return "text";
+  }
+};
+
+export const getLanguageLogo = (fileName: string) => {
+  const language = getLanguageThroughExtension(fileName.split(".").pop() || "");
+
+  switch (language) {
+    case "python":
+      return "/language-logo/python.svg";
+    case "javascript":
+      return "/language-logo/javascript.svg";
+    case "cpp":
+      return "/language-logo/cpp.svg";
+    case "java":
+      return "/language-logo/java.svg";
   }
 };

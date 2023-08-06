@@ -7,6 +7,7 @@ from project.api.api import (
     ProjectRetrieveUpdateDestroyAPIView,
     DirectoryListCreateAPIView,
     DirectoryRetrieveUpdateDestroyAPIView,
+    ProjectRunAPIView,
 )
 
 
@@ -17,12 +18,18 @@ urlpatterns = [
         ProjectEnvironmentRetrieveUpdateDestroyAPIView.as_view()
     ),
 
+    path(
+        'projects/<slug:project_slug>/run/<int:directory_pk>/',
+        ProjectRunAPIView.as_view()
+    ),
+
     path('projects/', ProjectListCreateAPIView.as_view()),
     path('projects/<slug>/', ProjectRetrieveUpdateDestroyAPIView.as_view()),
 
     path(
-        'directories/<slug:project_slug>/',
+        'directories/project/<slug:project_slug>/',
         DirectoryListCreateAPIView.as_view()
     ),
     path('directories/<int:pk>/', DirectoryRetrieveUpdateDestroyAPIView.as_view()),
+
 ]

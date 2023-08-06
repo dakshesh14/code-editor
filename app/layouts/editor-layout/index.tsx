@@ -1,5 +1,6 @@
 // layouts
 import { Sidebar } from "./sidebar";
+import { Explorer } from "./explorer";
 
 type Props = {
   children: React.ReactNode;
@@ -11,6 +12,7 @@ const EditorLayout: React.FC<Props> = (props) => {
   return (
     <>
       <Sidebar />
+      <Explorer />
 
       <div className="lg:pl-72 h-screen">
         <main className="h-full">

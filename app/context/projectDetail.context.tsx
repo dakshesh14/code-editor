@@ -4,7 +4,7 @@ import { createContext, useReducer, useCallback, useEffect } from "react";
 import { useRouter } from "next/router";
 
 // swr
-import useSWR from "swr";
+import useSWR, { KeyedMutator } from "swr";
 
 // services
 import { getProjectBySlug, getProjectDirectories } from "@/services";
@@ -31,8 +31,8 @@ export type ProjectDetailFunctionContext = {
   setSearch: (val: string) => void;
   setIsExecuting: (val: boolean) => void;
   setFileSearchOpen: (val: boolean) => void;
-  mutateProjectDetail: () => void;
-  mutateDirectories: () => void;
+  mutateProjectDetail: KeyedMutator<Project>;
+  mutateDirectories: KeyedMutator<Directory[]>;
   setCurrentOpenDirectory: (val: string) => void;
 };
 

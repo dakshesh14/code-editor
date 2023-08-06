@@ -81,3 +81,22 @@ export const deleteProject = async (slug: string): Promise<void> => {
     throw err;
   }
 };
+
+export const executeCode = async (
+  projectSlug: string,
+  directoryId: string
+): Promise<any> => {
+  try {
+    const { data } = await axios.post(
+      `${baseURL}/api/projects/${projectSlug}/run/${directoryId}/`,
+      {
+        headers: {
+          Authorization: `FingerPrint ${fingerPrint}`,
+        },
+      }
+    );
+    return data;
+  } catch (err) {
+    throw err;
+  }
+};

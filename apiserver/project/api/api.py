@@ -1,4 +1,5 @@
 from rest_framework import generics, status
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 
@@ -15,6 +16,7 @@ from project.models import (
     ProjectEnvironment,
 )
 
+from utils.code_executor import CodeExecutor
 from utils.string_helper import get_cpp_template
 
 
@@ -53,7 +55,7 @@ class ProjectListCreateAPIView(generics.ListCreateAPIView):
 
         elif project_type == 'vanilla_js':
             Directory.objects.create(
-                name='index.html',
+                name='index.js',
                 content="console.log('Hello World!')",
                 project=project,
             )
@@ -99,6 +101,12 @@ class DirectoryListCreateAPIView(generics.ListCreateAPIView):
             project__slug=project_slug,
         )
 
+        directories = sorted(
+            directories,
+            key=lambda directory: directory.file_type == 'directory',
+            reverse=True,
+        )
+
         return directories
 
     def perform_create(self, serializer):
@@ -118,3 +126,30 @@ class DirectoryListCreateAPIView(generics.ListCreateAPIView):
 class DirectoryRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Directory.objects.all()
     serializer_class = DirectorySerializer
+
+
+class ProjectRunAPIView(APIView):
+    def post(self, _, project_slug, directory_pk):
+        code_executor = CodeExecutor()
+
+        project = Project.objects.get(slug=project_slug)
+        directory = Directory.objects.get(pk=directory_pk)
+
+        command = code_executor.create_command(
+            directory,
+            project.directories.all(),
+        )
+
+        container = code_executor.create_container(command=command)
+
+        container.start()
+        container.wait()
+
+        logs = container.logs().decode('utf-8')
+
+        container.stop()
+        container.remove()
+
+        return Response({
+            'logs': logs
+        }, status=status.HTTP_200_OK)
