@@ -23,7 +23,7 @@ export const ToastContainer = () => {
   return (
     <div
       aria-live="assertive"
-      className="pointer-events-none fixed inset-0 z-10 flex w-full flex-col items-end space-y-4 px-4 py-6 sm:items-end sm:p-6"
+      className="pointer-events-none fixed bottom-0 z-10 flex w-full flex-col items-end space-y-4 px-4 py-6 sm:items-end sm:p-6"
     >
       {toasts.map((toast) => (
         <Toast key={toast.id} toast={toast} />
@@ -53,7 +53,7 @@ const Toast: React.FC<Props> = ({ toast }) => {
         leaveFrom="opacity-100"
         leaveTo="opacity-0"
       >
-        <div className="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white bg-clip-padding shadow-lg backdrop-blur-sm backdrop-filter">
+        <div className="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white border bg-clip-padding shadow-lg backdrop-blur-sm backdrop-filter">
           {status === "error" && (
             <div className="absolute left-0 top-0 h-full w-1 bg-red-600"></div>
           )}

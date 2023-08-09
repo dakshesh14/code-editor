@@ -5,7 +5,7 @@ import type { NextPage } from "next";
 
 // manoco
 import type { editor } from "monaco-editor";
-import { Editor } from "@monaco-editor/react";
+import { Editor, useMonaco } from "@monaco-editor/react";
 
 // icons
 import {
@@ -19,7 +19,7 @@ import {
 import { updateDirectory } from "@/services";
 
 // hooks
-import useCtrlKeydown from "@/hooks/use-ctrl-keydown";
+import useToast from "@/hooks/use-toast";
 import useCodeExecutor from "@/hooks/use-code-executor";
 import useProjectDetailContext from "@/hooks/use-project-detail";
 
@@ -33,6 +33,10 @@ export const ProjectEditor: NextPage = () => {
 
   const [chosenTheme, setChosenTheme] = useState(THEMES[0]);
   const [executionResult, setExecutionResult] = useState<string | null>(null);
+  const [isChanged, setIsChanged] = useState(false);
+
+  const Monaco = useMonaco();
+  const { addToast } = useToast();
 
   const { directories, currentOpenDirectory, project, mutateDirectories } =
     useProjectDetailContext();
@@ -45,18 +49,22 @@ export const ProjectEditor: NextPage = () => {
     project?.slug!,
     currentFile?.id!
   );
-  useCtrlKeydown("q", () => {
-    handleCodeRun(editorRef.current?.getValue() || "").then((res) => {
-      setExecutionResult(res || null);
-    });
-  });
-  useCtrlKeydown("s", () => {
-    updateDirectory(currentFile?.id!, {
+
+  const handleSave = async () => {
+    const saveBtn = document.getElementById("save-button");
+
+    if (saveBtn) saveBtn.innerText = "Saving...";
+
+    await updateDirectory(currentFile?.id!, {
       content: editorRef.current?.getValue() || "",
       name: currentFile?.name!,
       parent: currentFile?.parent!,
       project: currentFile?.project!,
     }).then((res) => {
+      setIsChanged(false);
+
+      if (saveBtn) saveBtn.innerText = "Saved";
+
       mutateDirectories((dirs) => {
         if (!dirs) return;
         const index = dirs.findIndex((dir) => dir.id === currentFile?.id!);
@@ -64,7 +72,43 @@ export const ProjectEditor: NextPage = () => {
         return [...dirs];
       });
     });
-  });
+  };
+
+  const handleEditorMount = (editor: editor.IStandaloneCodeEditor) => {
+    editorRef.current = editor;
+
+    if (!Monaco) return;
+
+    editor.addAction({
+      id: "execute-code",
+      label: "Execute Code",
+      keybindings: [Monaco.KeyMod.CtrlCmd | Monaco.KeyCode.KeyQ],
+      contextMenuGroupId: "navigation",
+      contextMenuOrder: 1.5,
+      run: () => {
+        addToast({
+          title: "Executing Code",
+          message: "Please wait while we execute your code",
+          status: "info",
+          hide: false,
+        });
+        handleCodeRun(editorRef.current?.getValue() || "").then((res) => {
+          setExecutionResult(res || null);
+        });
+      },
+    });
+
+    editor.addAction({
+      id: "save-file",
+      label: "Save File",
+      keybindings: [Monaco.KeyMod.CtrlCmd | Monaco.KeyCode.KeyS],
+      contextMenuGroupId: "navigation",
+      contextMenuOrder: 1.5,
+      run: () => {
+        handleSave();
+      },
+    });
+  };
 
   if (!currentFile)
     return (
@@ -99,7 +143,16 @@ export const ProjectEditor: NextPage = () => {
             {currentFile?.name}{" "}
           </p>
         </div>
-        <div className="space-x-2">
+        <div className="space-x-2 flex items-center">
+          <button
+            type="button"
+            onClick={handleSave}
+            className="inline-flex items-center px-3 py-2 shadow-sm text-sm leading-4 font-medium text-white"
+          >
+            <span id="save-button" className="text-gray-400">
+              {isChanged ? "Unsaved Changes" : "Saved"}
+            </span>
+          </button>
           <button
             type="button"
             className="inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
@@ -134,13 +187,21 @@ export const ProjectEditor: NextPage = () => {
         </div>
       </div>
       <Editor
-        onMount={(ref) => (editorRef.current = ref)}
+        onMount={handleEditorMount}
         theme={chosenTheme}
         path={currentFile?.path_name}
         value={currentFile?.content || ""}
         language={getLanguageThroughExtension(
           currentFile?.name.split(".").pop() ?? ""
         )}
+        onChange={(value) => {
+          if (!currentFile) return;
+
+          const isChange =
+            JSON.stringify(currentFile?.content) !== JSON.stringify(value);
+
+          setIsChanged(isChange);
+        }}
         options={{
           mouseWheelZoom: true,
           minimap: {
