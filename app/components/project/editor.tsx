@@ -1,11 +1,10 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 
 // next
 import type { NextPage } from "next";
 
 // manoco
-import type { editor } from "monaco-editor";
-import { Editor, useMonaco } from "@monaco-editor/react";
+import { Editor } from "@monaco-editor/react";
 
 // icons
 import {
@@ -15,100 +14,31 @@ import {
   MoonIcon,
 } from "@heroicons/react/24/outline";
 
-// services
-import { updateDirectory } from "@/services";
-
 // hooks
-import useToast from "@/hooks/use-toast";
-import useCodeExecutor from "@/hooks/use-code-executor";
+import useEditor, { THEMES } from "@/hooks/use-editor";
 import useProjectDetailContext from "@/hooks/use-project-detail";
 
-// helpers
-import { getLanguageThroughExtension } from "@/helpers/string.helper";
-
-const THEMES = ["vs", "vs-dark"];
-
 export const ProjectEditor: NextPage = () => {
-  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const { directories, currentOpenDirectory } = useProjectDetailContext();
 
-  const [chosenTheme, setChosenTheme] = useState(THEMES[0]);
-  const [executionResult, setExecutionResult] = useState<string | null>(null);
-  const [isChanged, setIsChanged] = useState(false);
-
-  const Monaco = useMonaco();
-  const { addToast } = useToast();
-
-  const { directories, currentOpenDirectory, project, mutateDirectories } =
-    useProjectDetailContext();
+  const {
+    editorTheme,
+    executionResult,
+    runCode,
+    handleEditorMount,
+    handleSave,
+    isChanged,
+    isExecuting,
+    language,
+    onChange,
+    toggleTheme,
+    value,
+    clearExecutionResult,
+  } = useEditor();
 
   const currentFile = directories?.find(
     (dir) => dir.id === currentOpenDirectory
   );
-
-  const { handleCodeRun, isExecuting } = useCodeExecutor(
-    project?.slug!,
-    currentFile?.id!
-  );
-
-  const handleSave = async () => {
-    const saveBtn = document.getElementById("save-button");
-
-    if (saveBtn) saveBtn.innerText = "Saving...";
-
-    await updateDirectory(currentFile?.id!, {
-      content: editorRef.current?.getValue() || "",
-      name: currentFile?.name!,
-      parent: currentFile?.parent!,
-      project: currentFile?.project!,
-    }).then((res) => {
-      setIsChanged(false);
-
-      if (saveBtn) saveBtn.innerText = "Saved";
-
-      mutateDirectories((dirs) => {
-        if (!dirs) return;
-        const index = dirs.findIndex((dir) => dir.id === currentFile?.id!);
-        dirs[index] = res;
-        return [...dirs];
-      });
-    });
-  };
-
-  const handleEditorMount = (editor: editor.IStandaloneCodeEditor) => {
-    editorRef.current = editor;
-
-    if (!Monaco) return;
-
-    editor.addAction({
-      id: "execute-code",
-      label: "Execute Code",
-      keybindings: [Monaco.KeyMod.CtrlCmd | Monaco.KeyCode.KeyQ],
-      contextMenuGroupId: "navigation",
-      contextMenuOrder: 1.5,
-      run: () => {
-        addToast({
-          title: "Executing Code",
-          message: "Please wait while we execute your code",
-          status: "info",
-          hide: false,
-        });
-        handleCodeRun(editorRef.current?.getValue() || "").then((res) => {
-          setExecutionResult(res || null);
-        });
-      },
-    });
-
-    editor.addAction({
-      id: "save-file",
-      label: "Save File",
-      keybindings: [Monaco.KeyMod.CtrlCmd | Monaco.KeyCode.KeyS],
-      contextMenuGroupId: "navigation",
-      contextMenuOrder: 1.5,
-      run: () => {
-        handleSave();
-      },
-    });
-  };
 
   if (!currentFile)
     return (
@@ -155,31 +85,22 @@ export const ProjectEditor: NextPage = () => {
           </button>
           <button
             type="button"
+            onClick={toggleTheme}
             className="inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
           >
-            {chosenTheme === THEMES[0] ? (
-              <MoonIcon
-                className="h-5 w-5"
-                aria-hidden="true"
-                onClick={() => setChosenTheme(THEMES[1])}
-              />
+            {editorTheme === THEMES[0] ? (
+              <MoonIcon className="h-5 w-5" aria-hidden="true" />
             ) : (
-              <SunIcon
-                className="h-5 w-5"
-                aria-hidden="true"
-                onClick={() => setChosenTheme(THEMES[0])}
-              />
+              <SunIcon className="h-5 w-5" aria-hidden="true" />
             )}
           </button>
 
           <button
             type="button"
             disabled={isExecuting}
-            onClick={() =>
-              handleCodeRun(editorRef.current?.getValue() ?? "").then((res) =>
-                setExecutionResult(res || null)
-              )
-            }
+            onClick={() => {
+              runCode();
+            }}
             className="inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
           >
             <PlayIcon className="h-5 w-5" aria-hidden="true" />
@@ -188,20 +109,11 @@ export const ProjectEditor: NextPage = () => {
       </div>
       <Editor
         onMount={handleEditorMount}
-        theme={chosenTheme}
+        theme={editorTheme}
         path={currentFile?.path_name}
-        value={currentFile?.content || ""}
-        language={getLanguageThroughExtension(
-          currentFile?.name.split(".").pop() ?? ""
-        )}
-        onChange={(value) => {
-          if (!currentFile) return;
-
-          const isChange =
-            JSON.stringify(currentFile?.content) !== JSON.stringify(value);
-
-          setIsChanged(isChange);
-        }}
+        value={value}
+        language={language}
+        onChange={onChange}
         options={{
           mouseWheelZoom: true,
           minimap: {
@@ -214,7 +126,7 @@ export const ProjectEditor: NextPage = () => {
         <div className="absolute bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 p-2 flex flex-col w-full h-[30vh]">
           <div className="w-full flex justify-between">
             <p className="text-gray-200 font-semibold text-lg">Output</p>
-            <button type="button" onClick={() => setExecutionResult(null)}>
+            <button type="button" onClick={clearExecutionResult}>
               <XMarkIcon className="h-5 w-5 text-gray-200" aria-hidden="true" />
             </button>
           </div>
