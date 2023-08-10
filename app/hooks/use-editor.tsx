@@ -1,13 +1,11 @@
-import { useRef, useState } from "react";
-
-// manoco
-import { useMonaco } from "@monaco-editor/react";
+import { use, useRef, useState } from "react";
 
 // services
 import { updateDirectory } from "@/services";
 
 // hooks
 import useToast from "@/hooks/use-toast";
+import useCtrlKeydown from "@/hooks/use-ctrl-keydown";
 import useCodeExecutor from "@/hooks/use-code-executor";
 import useProjectDetailContext from "@/hooks/use-project-detail";
 
@@ -23,7 +21,6 @@ const useEditor = () => {
   const [executionResult, setExecutionResult] = useState<string | null>(null);
   const [isChanged, setIsChanged] = useState(false);
 
-  const Monaco = useMonaco();
   const { addToast } = useToast();
 
   const { directories, currentOpenDirectory, project, mutateDirectories } =
@@ -90,32 +87,11 @@ const useEditor = () => {
     });
   };
 
+  useCtrlKeydown("s", handleSave);
+  useCtrlKeydown("q", runCode);
+
   const handleEditorMount = (editor: any) => {
     editorRef.current = editor;
-
-    if (!Monaco) return;
-
-    editor.addAction({
-      id: "execute-code",
-      label: "Execute Code",
-      keybindings: [Monaco.KeyMod.CtrlCmd | Monaco.KeyCode.KeyQ],
-      contextMenuGroupId: "navigation",
-      contextMenuOrder: 1.5,
-      run: () => {
-        runCode();
-      },
-    });
-
-    editor.addAction({
-      id: "save-file",
-      label: "Save File",
-      keybindings: [Monaco.KeyMod.CtrlCmd | Monaco.KeyCode.KeyS],
-      contextMenuGroupId: "navigation",
-      contextMenuOrder: 1.5,
-      run: () => {
-        handleSave();
-      },
-    });
   };
 
   const toggleTheme = () => {
@@ -140,7 +116,7 @@ const useEditor = () => {
     value: currentFile?.content || "",
     language: getLanguageThroughExtension(
       currentFile?.name.split(".").pop() ?? ""
-    ),
+    ).split(";")[0],
     isChanged,
     handleSave,
     isExecuting,
