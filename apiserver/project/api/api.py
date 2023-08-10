@@ -75,8 +75,8 @@ class ProjectListCreateAPIView(generics.ListCreateAPIView):
             code_content = get_react_code_content()
 
             Directory.objects.create(
-                name='App.js',
-                content=code_content.get('js', ''),
+                name='App.jsx',
+                content=code_content.get('jsx', ''),
                 project=project,
             )
             Directory.objects.create(
@@ -179,7 +179,7 @@ class ProjectBrowserIFrameCodeAPIView(APIView):
 
         code = create_react_body(
             project.directories.filter(name__endswith='.css'),
-            project.directories.filter(name__endswith='.js'),
+            project.directories.filter(name__regex=r'.*\.(jsx|js)$'),
         )
 
         return Response({

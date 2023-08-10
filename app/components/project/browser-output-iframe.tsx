@@ -29,6 +29,7 @@ export const BrowserOutputIFrame: React.FC = () => {
         srcDoc={data?.code}
         title="Testing"
         sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+        className="w-full h-screen overflow-auto border-none"
       />
     </>
   );

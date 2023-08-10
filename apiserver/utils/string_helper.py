@@ -45,8 +45,9 @@ def get_cpp_template() -> str:
 
 def get_react_code_content():
     return {
-        "js": """
-            # no need to import component, css, etc. as we are using babel
+        "jsx": """
+            // no need to import component, css, etc.. in the component
+            // you must have App component in order to render the react app
             
             const App = () => {
                 return (
@@ -60,6 +61,8 @@ def get_react_code_content():
             body {
                 margin: 0;
                 padding: 0;
+                min-height: 100vh;
+                min-width: 100vw;
                 box-sizing: border-box;
                 background-color: #282c34;
                 color: white;
