@@ -14,6 +14,8 @@ export const getLanguageThroughExtension = (extension: string) => {
       return "java";
     case "cpp":
       return "cpp";
+    case "css":
+      return "css";
     default:
       return "text";
   }
@@ -31,5 +33,7 @@ export const getLanguageLogo = (fileName: string) => {
       return "/language-logo/cpp.svg";
     case "java":
       return "/language-logo/java.svg";
+    case "css":
+      return "/language-logo/css.svg";
   }
 };
