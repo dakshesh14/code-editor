@@ -35,5 +35,7 @@ export const getLanguageLogo = (fileName: string) => {
       return "/language-logo/java.svg";
     case "css":
       return "/language-logo/css.svg";
+    default:
+      return "/language-logo/markdown.svg";
   }
 };
