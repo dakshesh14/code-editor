@@ -39,6 +39,11 @@ const useEditor = () => {
   );
 
   const runCode = async () => {
+    if (project?.project_type === "react") {
+      window.open(`/output/${project?.slug}/`, "_blank");
+      return;
+    }
+
     if (isExecuting) {
       addToast({
         title: "Already Executing",

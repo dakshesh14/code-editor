@@ -100,3 +100,19 @@ export const executeCode = async (
     throw err;
   }
 };
+
+export const getBrowserIFrameCode = async (projectSlug: string) => {
+  try {
+    const { data } = await axios.get(
+      `${baseURL}/api/projects/${projectSlug}/browser-iframe-code/`,
+      {
+        headers: {
+          Authorization: `FingerPrint ${fingerPrint}`,
+        },
+      }
+    );
+    return data;
+  } catch (err) {
+    throw err;
+  }
+};
