@@ -56,7 +56,7 @@ const useEditor = () => {
       hide: false,
     });
 
-    const res = await handleCodeRun(editorRef.current?.getValue() || "");
+    const res = await handleCodeRun();
 
     setExecutionResult(res || null);
   };

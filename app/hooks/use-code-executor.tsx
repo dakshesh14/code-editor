@@ -6,7 +6,7 @@ import { executeCode } from "@/services";
 const useCodeExecutor = (projectSlug: string, directoryId: string) => {
   const [isExecuting, setIsExecuting] = useState(false);
 
-  const handleCodeRun = async (code: string) => {
+  const handleCodeRun = async () => {
     let data;
 
     setIsExecuting(true);
