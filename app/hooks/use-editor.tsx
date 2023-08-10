@@ -39,6 +39,16 @@ const useEditor = () => {
   );
 
   const runCode = async () => {
+    if (isExecuting) {
+      addToast({
+        title: "Already Executing",
+        message: "Please wait while we execute your code",
+        status: "info",
+        hide: false,
+      });
+      return;
+    }
+
     addToast({
       title: "Executing Code",
       message: "Please wait while we execute your code",
