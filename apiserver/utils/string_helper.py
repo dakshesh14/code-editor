@@ -41,3 +41,75 @@ def get_cpp_template() -> str:
                 cout << "Hello World!";
                 return 0;
             } """
+
+
+def get_react_code_content():
+    return {
+        "js": """
+            # no need to import component, css, etc. as we are using babel
+            
+            const App = () => {
+                return (
+                    <div>
+                        <h1>Hello World</h1>
+                    </div>
+                )
+            }            
+        """,
+        "css": """
+            body {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                background-color: #282c34;
+                color: white;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+        """
+    }
+
+
+def create_react_body(
+        css_file_content: list,
+        js_files_content: list,
+) -> str:
+    """ This function can be used to get react code. This code can be directly 
+    used in browser console without any need of npm or nodejs installation.
+
+    Returns:
+        str: React code.
+    """
+
+    return f"""
+        <html>
+            <head>
+                <title>React App</title>
+                <meta charset="utf-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <style>
+                    {"".join([file.content for file in css_file_content])}                    
+                </style>
+            </head>
+            <body>
+                <div id="root" />
+
+                
+                <script src="https://unpkg.com/@babel/standalone@7.12.4/babel.min.js"></script>
+                <!-- babel is required in order to parse JSX -->
+
+                <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+                <!-- import react.js -->
+
+                <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"> </script>
+
+                <script type='text/babel'>
+                    {"".join([file.content for file in js_files_content])}
+                </script>
+
+                <script type='text/babel'>
+                    var mountNode = document.getElementById('root');
+                    ReactDOM.render(<App />, mountNode);
+                </script>
+            </body>
+        </html>
+    """

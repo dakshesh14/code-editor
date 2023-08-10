@@ -8,6 +8,7 @@ from project.api.api import (
     DirectoryListCreateAPIView,
     DirectoryRetrieveUpdateDestroyAPIView,
     ProjectRunAPIView,
+    ProjectBrowserIFrameCodeAPIView,
 )
 
 
@@ -16,6 +17,11 @@ urlpatterns = [
     path(
         'project-environments/<int:pk>/',
         ProjectEnvironmentRetrieveUpdateDestroyAPIView.as_view()
+    ),
+
+    path(
+        'projects/<slug:project_slug>/browser-iframe-code/',
+        ProjectBrowserIFrameCodeAPIView.as_view()
     ),
 
     path(

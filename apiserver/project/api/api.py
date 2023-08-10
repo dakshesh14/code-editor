@@ -17,7 +17,11 @@ from project.models import (
 )
 
 from utils.code_executor import CodeExecutor
-from utils.string_helper import get_cpp_template
+from utils.string_helper import (
+    get_cpp_template,
+    get_react_code_content,
+    create_react_body,
+)
 
 
 class ProjectEnvironmentListCreateAPIView(generics.ListCreateAPIView):
@@ -64,6 +68,20 @@ class ProjectListCreateAPIView(generics.ListCreateAPIView):
             Directory.objects.create(
                 name='main.cpp',
                 content=get_cpp_template(),
+                project=project,
+            )
+
+        elif project_type == 'react':
+            code_content = get_react_code_content()
+
+            Directory.objects.create(
+                name='App.js',
+                content=code_content.get('js', ''),
+                project=project,
+            )
+            Directory.objects.create(
+                name='App.css',
+                content=code_content.get('css', ''),
                 project=project,
             )
 
@@ -152,4 +170,18 @@ class ProjectRunAPIView(APIView):
 
         return Response({
             'logs': logs
+        }, status=status.HTTP_200_OK)
+
+
+class ProjectBrowserIFrameCodeAPIView(APIView):
+    def get(self, _, project_slug):
+        project = Project.objects.get(slug=project_slug)
+
+        code = create_react_body(
+            project.directories.filter(name__endswith='.css'),
+            project.directories.filter(name__endswith='.js'),
+        )
+
+        return Response({
+            'code': code
         }, status=status.HTTP_200_OK)
