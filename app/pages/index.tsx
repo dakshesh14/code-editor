@@ -13,11 +13,10 @@ const Landing = () => {
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="mx-auto max-w-2xl text-center">
               <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
-                Write & execute code collaboratively
+                Write & execute code in your browser
               </h1>
               <p className="mt-6 text-lg leading-8 text-gray-300">
-                A project powered by Django, Next.js, Tailwind, WebSocket, CRDT,
-                docker and more.
+                A project powered by Django, Next.js, Tailwind, docker and more.
               </p>
               <div className="mt-10 flex items-center justify-center gap-x-6">
                 <Link
