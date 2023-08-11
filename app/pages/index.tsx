@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 // components
 import { Header } from "@/components/landing";
@@ -35,8 +36,13 @@ const Landing = () => {
               </div>
             </div>
 
-            <div className="flex relative-md mt-16 sm:mt-24 w-full h-[40rem] bg-red-50 justify-center items-center p-5">
-              <p>Please assume this is a photo of the final product :P</p>
+            <div className="relative flex rounded-md mt-16 sm:mt-24 w-full h-[40rem] justify-center items-center p-5">
+              <Image
+                fill
+                className="object-cover object-left rounded-md"
+                src="/product.png"
+                alt="Project"
+              />
             </div>
           </div>
         </div>
