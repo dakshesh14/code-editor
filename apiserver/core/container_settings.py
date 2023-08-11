@@ -32,7 +32,9 @@ CONTAINER_CONFIG = {
     },
     'ulimits': [
         docker.types.Ulimit(name='cpu', soft=2, hard=2),
-        docker.types.Ulimit(name='fsize', soft=1024, hard=2048),
+        docker.types.Ulimit(
+            name='fsize', soft=1024 * 1024*10, hard=1024*1024*10
+        ),
         docker.types.Ulimit(name='memlock', soft=1024, hard=2048),
         docker.types.Ulimit(name='nofile', soft=1024, hard=2048),
         docker.types.Ulimit(name='nproc', soft=2, hard=2),
