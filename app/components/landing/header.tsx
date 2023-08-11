@@ -43,14 +43,9 @@ export const Header = () => {
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Code Editor</span>
-            <div className="h-12 w-12 relative">
-              <Image
-                alt="Code Editor"
-                fill
-                className="object-contain"
-                src="/logo.png"
-              />
-            </div>
+            <h1 className="text-2xl font-bold tracking-tight text-gray-50">
+              Code Editor
+            </h1>
           </Link>
         </div>
         <div className="flex lg:hidden">
@@ -87,14 +82,9 @@ export const Header = () => {
           <div className="flex items-center justify-between">
             <Link href="/" className="-m-1.5 p-1.5">
               <span className="sr-only">Code Editor</span>
-              <div className="h-12 w-12 relative">
-                <Image
-                  alt="Code Editor"
-                  fill
-                  className="object-contain"
-                  src="/logo.png"
-                />
-              </div>
+              <h1 className="text-2xl font-bold tracking-tight text-gray-50">
+                Code Editor
+              </h1>
             </Link>
             <button
               type="button"
