@@ -3,9 +3,6 @@ import { useState } from "react";
 // next
 import Image from "next/image";
 
-// react hook form
-import { useForm } from "react-hook-form";
-
 // headless ui
 import { Disclosure } from "@headlessui/react";
 
@@ -13,14 +10,12 @@ import { Disclosure } from "@headlessui/react";
 import {
   DocumentPlusIcon,
   FolderPlusIcon,
-  DocumentIcon,
-  FolderIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 
 // services
-import { createDirectory, deleteDirectory } from "@/services";
+import { deleteDirectory } from "@/services";
 
 // helpers
 import { classNames, getLanguageLogo } from "@/helpers/string.helper";
@@ -28,12 +23,11 @@ import { classNames, getLanguageLogo } from "@/helpers/string.helper";
 // hooks
 import useProjectDetailContext from "@/hooks/use-project-detail";
 
-// types
-import type { Directory, DirectoryForm } from "@/types";
+// components
+import { CreateDirectoryInline } from "./create-directory-inline";
 
-const defaultValues: Partial<DirectoryForm> = {
-  name: "",
-};
+// types
+import type { Directory } from "@/types";
 
 export const DirectoryItem: React.FC<{ directory: Directory }> = ({
   directory,
@@ -42,32 +36,15 @@ export const DirectoryItem: React.FC<{ directory: Directory }> = ({
   const [isNewFileInlineOpen, setIsNewFileInlineOpen] = useState(false);
   const [isNewFolderInlineOpen, setIsNewFolderInlineOpen] = useState(false);
 
-  const { register, handleSubmit } = useForm<DirectoryForm>({ defaultValues });
-
   const {
     currentOpenDirectory,
     setCurrentOpenDirectory,
     directories,
     mutateDirectories,
-    project,
   } = useProjectDetailContext();
 
   const children =
     directories?.filter((dir) => dir.parent === directory.id) || [];
-
-  const onSubmit = async (data: DirectoryForm) => {
-    await createDirectory(project?.slug!, {
-      ...data,
-      parent: directory.id,
-      project: project?.id!,
-    }).then((res) => {
-      mutateDirectories((prev) => [...(prev || []), res]);
-
-      setIsNewFileInlineOpen(false);
-      setIsNewFolderInlineOpen(false);
-      setIsContextMenuOpen(false);
-    });
-  };
 
   const onDelete = async () => {
     await deleteDirectory(directory.id).then(() => {
@@ -79,12 +56,13 @@ export const DirectoryItem: React.FC<{ directory: Directory }> = ({
 
   return (
     <li className="relative">
-      {children.length <= 0 ? (
+      {directory.file_type === "file" ? (
         <button
           type="button"
           onClick={() => setCurrentOpenDirectory(directory.id)}
           onContextMenu={(e) => {
             e.preventDefault();
+            e.stopPropagation();
             setIsContextMenuOpen(true);
           }}
           className={classNames(
@@ -111,6 +89,7 @@ export const DirectoryItem: React.FC<{ directory: Directory }> = ({
               <Disclosure.Button
                 onContextMenu={(e) => {
                   e.preventDefault();
+                  e.stopPropagation();
                   setIsContextMenuOpen(true);
                 }}
                 className={classNames(
@@ -143,25 +122,15 @@ export const DirectoryItem: React.FC<{ directory: Directory }> = ({
       )}
 
       {(isNewFileInlineOpen || isNewFolderInlineOpen) && (
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="px-2 ml-4 flex items-center gap-0.5"
-        >
-          {isNewFileInlineOpen ? (
-            <DocumentIcon
-              className="h-5 w-5 text-gray-300"
-              aria-hidden="true"
-            />
-          ) : (
-            <FolderIcon className="h-5 w-5 text-gray-300" aria-hidden="true" />
-          )}
-
-          <input
-            type="text"
-            {...register("name")}
-            className="bg-gray-800 text-gray-300 rounded-md px-2 py-1 w-full"
-          />
-        </form>
+        <CreateDirectoryInline
+          directory={directory}
+          isFile={isNewFileInlineOpen}
+          handleClose={() => {
+            setIsNewFileInlineOpen(false);
+            setIsNewFolderInlineOpen(false);
+            setIsContextMenuOpen(false);
+          }}
+        />
       )}
 
       {isContextMenuOpen && (

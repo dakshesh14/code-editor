@@ -2,7 +2,7 @@ export interface Directory {
   id: string;
   name: string;
   content: string | null;
-  file_type: string;
+  file_type: "file" | "directory";
   created_at: Date;
   last_modified: Date;
   project: string;

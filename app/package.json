@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.3",
-    "@types/uuid": "^9.0.2"
+    "@types/uuid": "^9.0.2",
+    "tailwind-merge": "^1.14.0"
   }
 }

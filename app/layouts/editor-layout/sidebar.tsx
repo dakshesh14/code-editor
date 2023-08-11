@@ -1,9 +1,13 @@
+import { useState } from "react";
+
 // next
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 // icons
 import { FolderIcon, HomeIcon } from "@heroicons/react/24/outline";
+// icons
+import { FolderPlusIcon, DocumentPlusIcon } from "@heroicons/react/24/outline";
 
 // helpers
 import { classNames } from "@/helpers/string.helper";
@@ -13,6 +17,7 @@ import useProjectDetailContext from "@/hooks/use-project-detail";
 
 // components
 import { DirectoryItem } from "@/layouts/editor-layout/directory-item";
+import { CreateDirectoryInline } from "@/layouts/editor-layout/create-directory-inline";
 
 const navigation = [
   { name: "Home", href: "/", icon: HomeIcon },
@@ -22,10 +27,69 @@ const navigation = [
 export const Sidebar: React.FC = () => {
   const router = useRouter();
 
+  const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
+  const [contextMenuClickPosition, setContextMenuClickPosition] = useState({
+    x: 0,
+    y: 0,
+  });
+  const [inlineOpenFor, setInlineOpenFor] = useState<"file" | "folder" | null>(
+    null
+  );
+
   const { project, directories } = useProjectDetailContext();
 
   return (
-    <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+    <div
+      onContextMenu={(e) => {
+        e.preventDefault();
+        setContextMenuClickPosition({ x: e.clientX, y: e.clientY });
+        setIsContextMenuOpen(true);
+      }}
+      className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col"
+    >
+      {isContextMenuOpen && (
+        <div
+          style={{
+            top: contextMenuClickPosition.y,
+            left: contextMenuClickPosition.x,
+          }}
+          className="fixed bg-gray-800 text-gray-300 space-y-2 rounded-md py-2 border z-50"
+        >
+          <button
+            type="button"
+            onClick={() => {
+              setInlineOpenFor("file");
+              setIsContextMenuOpen(false);
+            }}
+            className="flex items-center gap-x-2 hover:bg-gray-500 rounded-md w-full pl-2 pr-8 py-1"
+          >
+            <DocumentPlusIcon className="h-5 w-5" aria-hidden="true" />
+            <span>New File</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setInlineOpenFor("folder");
+              setIsContextMenuOpen(false);
+            }}
+            className="flex items-center gap-x-2 hover:bg-gray-500 rounded-md w-full pl-2 pr-8 py-1"
+          >
+            <FolderPlusIcon className="h-5 w-5" aria-hidden="true" />
+            <span>New Folder</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setIsContextMenuOpen(false);
+            }}
+            className="flex items-center gap-x-2 hover:bg-gray-500 rounded-md w-full pl-2 pr-8 py-1"
+          >
+            <span>Close</span>
+          </button>
+        </div>
+      )}
+
       <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 py-4">
         <nav className="flex flex-1 flex-col">
           <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -57,6 +121,18 @@ export const Sidebar: React.FC = () => {
                 {project?.name || "Loading..."}
               </div>
               <ul role="list" className="-mx-2 mt-2 space-y-1">
+                <li>
+                  {Boolean(inlineOpenFor) && (
+                    <CreateDirectoryInline
+                      isFile={inlineOpenFor === "file"}
+                      className="ml-0 mb-2"
+                      handleClose={() => {
+                        setIsContextMenuOpen(false);
+                        setInlineOpenFor(null);
+                      }}
+                    />
+                  )}
+                </li>
                 {directories
                   ? directories
                       .filter((directory) => directory.parent === null)
