@@ -98,7 +98,7 @@ class CodeExecutor:
             str: The formatted code.
 
         """
-        return code.replace('"', '\\"')
+        return code.replace('"', '\\"') if code else ''
 
     def create_command(self, entry_file, directories):
         """ Create a command to be executed in the container.
