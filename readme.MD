@@ -65,6 +65,7 @@ yarn start
 
 ![screenshot 1](https://github.com/dakshesh14/code-editor/assets/65905942/99a864b9-a58c-42f7-9fa9-bbda74d37582)
 ![screenshot 2](https://github.com/dakshesh14/code-editor/assets/65905942/9073a639-6259-457c-80cc-62360635d06e)
+![screenshot 3](https://github.com/dakshesh14/code-editor/assets/65905942/b728225d-5134-46fb-a6d3-b4bd6e327265)
 
 ## Contributing
 
@@ -93,6 +94,13 @@ To set a limit on system calls and resource usage, I have configured docker to u
 ### Code editor
 
 I used [monaco editor](https://microsoft.github.io/monaco-editor/) to give users a look and feel they are already familiar with. I also added some customizations to make it more user friendly.
+
+## Socials
+
+- [Twitter](https://twitter.com/_dakshesh)
+- [LinkedIn](https://www.linkedin.com/in/dakshesh-jain/)
+- [Github](https://github.com/dakshesh14)
+- [Website](https://dakshesh.me/)
 
 ## Acknowledgement
 
