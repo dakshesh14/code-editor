@@ -113,3 +113,12 @@ I used [monaco editor](https://microsoft.github.io/monaco-editor/) to give users
 - Monaco Editor (https://microsoft.github.io/monaco-editor/)
 - Docker (https://www.docker.com/)
 - Fingerprintjs (https://github.com/fingerprintjs/fingerprintjs)
+
+## Future scope
+
+Apart from the issues I have created, there are a lot of things that can be done to improve this project. Some of them are:
+
+- Add support for environment variables for code execution.
+- Making the editor collaborative using websockets & CRDT.
+- Add support for more languages.
+- Add support for more frameworks.
