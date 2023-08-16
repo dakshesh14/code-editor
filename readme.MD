@@ -4,7 +4,7 @@ An online code-editor, where you can write python, cpp, javascript, java, and re
 
 I covered interpreter language, compile language and client side technology in this project to demonstrate how might one handle these languages.
 
-https://github.com/dakshesh14/code-editor/assets/65905942/77b0515b-c3af-4cb2-9b03-64d4838bd8a9
+https://github.com/dakshesh14/code-editor/assets/65905942/99a864b9-a58c-42f7-9fa9-bbda74d37582
 
 ## Features
 
@@ -63,9 +63,9 @@ yarn start
 
 ## Screenshots
 
-![screenshot 1](https://github.com/dakshesh14/code-editor/assets/65905942/99a864b9-a58c-42f7-9fa9-bbda74d37582)
-![screenshot 2](https://github.com/dakshesh14/code-editor/assets/65905942/9073a639-6259-457c-80cc-62360635d06e)
-![screenshot 3](https://github.com/dakshesh14/code-editor/assets/65905942/b728225d-5134-46fb-a6d3-b4bd6e327265)
+![screenshot 1](https://github.com/dakshesh14/code-editor/assets/65905942/9d4d55d5-6649-407d-a3dc-d7c7349e43f9)
+![screenshot 2](https://github.com/dakshesh14/code-editor/assets/65905942/35544321-335e-46f7-b756-40da61efbd9c)
+![screenshot 3](https://github.com/dakshesh14/code-editor/assets/65905942/74276138-c2f0-4311-a484-1bb2251f82bd)
 
 ## Contributing
 
