@@ -1,0 +1,21 @@
+# `version` is now deprecated
+# https://docs.docker.com/compose/compose-file/#version-top-level-element
+
+services:
+  app:
+    container_name: app
+    build:
+      context: ./app
+      dockerfile: dev.Dockerfile
+    environment:
+      ENV_VARIABLE: ${ENV_VARIABLE}
+      NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
+
+    ports:
+      - 3000:3000
+
+    volumes:
+      - ./app/src:/app/src
+      - ./app/public:/app/public
+      # It's not necessary to sync the `.next` directory
+    restart: always

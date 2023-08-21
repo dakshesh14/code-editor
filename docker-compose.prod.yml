@@ -1,0 +1,18 @@
+# `version` is now deprecated
+# https://docs.docker.com/compose/compose-file/#version-top-level-element
+
+services:
+  app:
+    container_name: app-prod
+    build:
+      context: ./app
+      dockerfile: prod.Dockerfile
+      args:
+        ENV_VARIABLE: ${ENV_VARIABLE}
+        NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+    ports:
+      - 3000:3000
+    restart: always
+
+# TODO: Add nginx service
