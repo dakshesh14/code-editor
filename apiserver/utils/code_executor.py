@@ -42,6 +42,7 @@ class CodeExecutor:
 
         """
         docker_client = self.docker_client
+        print(self.docker_client)
 
         try:
             image = docker_client.images.get(self.image_name)

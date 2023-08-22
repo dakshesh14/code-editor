@@ -7,15 +7,52 @@ services:
     build:
       context: ./app
       dockerfile: dev.Dockerfile
-    environment:
-      ENV_VARIABLE: ${ENV_VARIABLE}
-      NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
-
+    env_file:
+      - ./app/.env
     ports:
       - 3000:3000
-
+    depends_on:
+      - django
     volumes:
       - ./app/src:/app/src
       - ./app/public:/app/public
-      # It's not necessary to sync the `.next` directory
     restart: always
+
+  django:
+    container_name: django
+    build:
+      context: ./apiserver
+      dockerfile: ./compose/local/Dockerfile
+    image: django
+    depends_on:
+      - postgres
+      - sandbox
+    # volumes:
+    #   - .:/apiserver:z
+    env_file:
+      - ./apiserver/.envs/.local/.django
+      - ./apiserver/.envs/.local/.postgres
+    ports:
+      - '8000:8000'
+    command: /start
+
+  postgres:
+    build:
+      context: ./apiserver
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: django_postgres
+    container_name: django_postgres
+    env_file:
+      - ./apiserver/.envs/.local/.postgres
+
+  sandbox:
+    build: 
+      context: ./apiserver
+      dockerfile: ./compose/production/sandbox/Dockerfile
+    image: sandbox
+    container_name: sandbox
+
+
+networks:
+  my_network:
+    external: true

@@ -7,12 +7,43 @@ services:
     build:
       context: ./app
       dockerfile: prod.Dockerfile
-      args:
-        ENV_VARIABLE: ${ENV_VARIABLE}
-        NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+    env_file:
+      - ./app/.env
+    depends_on:
+      - django
     ports:
       - 3000:3000
     restart: always
 
-# TODO: Add nginx service
+
+  django:
+    build:
+      context: ./apiserver
+      dockerfile: ./compose/production/django/Dockerfile
+
+    image: django-prod
+    depends_on:
+      - postgres
+      - sandbox
+    env_file:
+      - ./apiserver/.envs/.production/.django
+      - ./apiserver/.envs/.production/.postgres
+    ports:
+      - "8000:8000"
+    command: /start
+
+  postgres:
+    build:
+      context: ./apiserver
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: django_postgres
+    env_file:
+      - ./apiserver/.envs/.production/.postgres
+
+
+  sandbox:
+    build: 
+      context: ./apiserver
+      dockerfile: ./compose/production/sandbox/Dockerfile
+    image: sandbox
+    container_name: sandbox
